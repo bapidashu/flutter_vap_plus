@@ -3,6 +3,7 @@ package com.nell.flutter_vap_plus
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import com.tencent.qgame.animplayer.AnimConfig
@@ -42,6 +43,8 @@ internal class NativeVapView(
 
     init {
         channel.setMethodCallHandler(this)
+        // 设置透明背景以支持透明动效
+        vapView.setBackgroundColor(Color.TRANSPARENT)
     }
 
     override fun onFlutterViewAttached(flutterView: View) {

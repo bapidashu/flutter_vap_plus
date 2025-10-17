@@ -7,12 +7,10 @@ import 'vap_view.dart';
 class VapViewForIos extends StatelessWidget {
   final void Function(VapController controller) onControllerCreated;
   final VapScaleFit fit;
-  final void Function(dynamic event,dynamic arguments)? onEvent;
+  final void Function(dynamic event, dynamic arguments)? onEvent;
 
   VapViewForIos(
-      {required this.onControllerCreated,
-      required this.fit,
-      this.onEvent});
+      {required this.onControllerCreated, required this.fit, this.onEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +22,8 @@ class VapViewForIos extends StatelessWidget {
       layoutDirection: TextDirection.ltr,
       creationParams: creationParams,
       creationParamsCodec: StandardMessageCodec(),
-      onPlatformViewCreated: (viewId) async{
-        //await Future.delayed(const Duration(milliseconds: 1000));
+      onPlatformViewCreated: (viewId) async {
+        // MethodChannel在native端已经同步设置完成，无需延迟
         onControllerCreated(VapController(
           viewId: viewId,
           onEvent: onEvent,
