@@ -10,6 +10,7 @@ class VapView extends StatefulWidget {
   final VapScaleFit fit;
   final int? repeatCount;
   final void Function(dynamic event,dynamic arguments)? onEvent;
+  final void Function()? onStart;
 
   const VapView({
     super.key,
@@ -17,6 +18,7 @@ class VapView extends StatefulWidget {
     this.fit = VapScaleFit.FIT_CENTER,
     this.repeatCount,
     this.onEvent,
+    this.onStart,
   });
 
   @override
@@ -34,12 +36,14 @@ class _VapViewState extends State<VapView> {
         fit: widget.fit,
         repeatCount: widget.repeatCount ?? 1,
         onEvent: widget.onEvent,
+        onStart: widget.onStart,
       );
     } else if (Platform.isIOS) {
       return VapViewForIos(
         onControllerCreated: onControllerCreated,
         fit: widget.fit,
         onEvent: widget.onEvent,
+        onStart: widget.onStart,
       );
     }
     return Container();
