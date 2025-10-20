@@ -19,12 +19,14 @@ class VapController {
 
   Completer<void>? playCompleter;
 
-
   Future<void> play(
-      {required String source, required String playMethod, required String playArg, List<
-          FetchResourceModel> fetchResources = const []}) async {
+      {required String source,
+      required String playMethod,
+      required String playArg,
+      List<FetchResourceModel> fetchResources = const []}) async {
     try {
       playCompleter = Completer<void>();
+
       /// 先设置融合动画参数再播放，不然会出现融合动画不起作用的问题
       await setFetchResources(fetchResources);
 
@@ -32,10 +34,10 @@ class VapController {
 
       return playCompleter!.future.timeout(const Duration(seconds: 20),
           onTimeout: () {
-            if (playCompleter?.isCompleted == true) return;
-            playCompleter?.completeError(
-                TimeoutException("wait play complete timeout"));
-          });
+        if (playCompleter?.isCompleted == true) return;
+        playCompleter
+            ?.completeError(TimeoutException("wait play complete timeout"));
+      });
     } catch (e, s) {
       playCompleter?.completeError(e, s);
     }
@@ -43,7 +45,8 @@ class VapController {
 
   Future<void> playPath(String path,
       {List<FetchResourceModel> fetchResources = const []}) {
-    return play(source: path,
+    return play(
+        source: path,
         playMethod: 'playPath',
         playArg: 'path',
         fetchResources: fetchResources);
@@ -51,7 +54,8 @@ class VapController {
 
   Future<void> playAsset(String asset,
       {List<FetchResourceModel> fetchResources = const []}) {
-    return play(source: asset,
+    return play(
+        source: asset,
         playMethod: 'playAsset',
         playArg: 'asset',
         fetchResources: fetchResources);
@@ -62,13 +66,19 @@ class VapController {
   }
 
   Future setFetchResources(List<FetchResourceModel> resources) {
-    return _methodChannel.invokeMethod(
-        'setFetchResource',
+    return _methodChannel.invokeMethod('setFetchResource',
         jsonEncode(resources.map((e) => e.toMap()).toList()));
   }
 
   void dispose() {
+    // 停止播放以释放GPU资源
+    stop();
+    // 移除方法调用处理器
     _methodChannel.setMethodCallHandler(null);
+    // 如果有未完成的播放，取消它
+    if (playCompleter != null && !playCompleter!.isCompleted) {
+      playCompleter?.completeError('VapController disposed');
+    }
   }
 
   Future _onMethodCallHandler(MethodCall call) async {
@@ -110,10 +120,8 @@ class FetchResourceModel {
 
   FetchResourceModel({required this.tag, required this.resource});
 
-  Map<String, String> toMap() =>
-      {
+  Map<String, String> toMap() => {
         'tag': tag,
         'resource': resource,
       };
-
 }

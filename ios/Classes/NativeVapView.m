@@ -202,11 +202,29 @@
 
 - (void)stopPlayback {
     if (_wrapView) {
+        // 停止播放
+        [_wrapView stopPlay];
+        // 从视图层级中移除
         [_wrapView removeFromSuperview];
+        // 置空引用
         _wrapView = nil;
     }
     playStatus = NO;
+}
 
+// dealloc时彻底清理资源，避免与Cocos等其他OpenGL上下文冲突
+- (void)dealloc {
+    NSLog(@"NativeVapView dealloc - Cleaning up GPU resources");
+    
+    // 确保停止播放并释放所有资源
+    [self stopPlayback];
+    
+    // 清理其他资源
+    _fetchResources = nil;
+    _methodChannel = nil;
+    _view = nil;
+    
+    NSLog(@"NativeVapView dealloc - All resources released");
 }
 
 #pragma mark - VAPWrapViewDelegate
@@ -224,13 +242,11 @@
 - (void)vapWrap_viewDidFailPlayMP4:(NSError *)error {
     playStatus = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
-
-    [self->_methodChannel invokeMethod:@"onFailed" arguments:@{
-        @"status": @"failure",
-        @"errorMsg": error.localizedDescription ?: @"Unknown error"
-}];
+        [self->_methodChannel invokeMethod:@"onFailed" arguments:@{
+            @"status": @"failure",
+            @"errorMsg": error.localizedDescription ?: @"Unknown error"
+        }];
     });
-
 }
 
 - (void)vapWrap_viewDidStopPlayMP4:(NSInteger)lastFrameIndex view:(VAPView *)container {
@@ -240,10 +256,8 @@
 - (void)vapWrap_viewDidFinishPlayMP4:(NSInteger)totalFrameCount view:(VAPView *)container {
     playStatus = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
-
-    [self->_methodChannel invokeMethod:@"onComplete" arguments:@{@"status" : @"complete"}];
+        [self->_methodChannel invokeMethod:@"onComplete" arguments:@{@"status" : @"complete"}];
     });
-
 }
 
 - (NSString *)vapWrapview_contentForVapTag:(NSString *)tag resource:(QGVAPSourceInfo *)info{
