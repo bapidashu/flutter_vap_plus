@@ -203,7 +203,7 @@
 - (void)stopPlayback {
     if (_wrapView) {
         // 停止播放
-        [_wrapView stopPlay];
+        [_wrapView stopHWDMP4];
         // 从视图层级中移除
         [_wrapView removeFromSuperview];
         // 置空引用
