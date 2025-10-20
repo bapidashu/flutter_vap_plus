@@ -201,6 +201,7 @@
 }
 
 - (void)stopPlayback {
+    NSLog(@"NativeVapView stopPlayback");
     if (_wrapView) {
         // 停止播放
         [_wrapView stopHWDMP4];
