@@ -8,13 +8,9 @@ class VapViewForIos extends StatelessWidget {
   final void Function(VapController controller) onControllerCreated;
   final VapScaleFit fit;
   final void Function(dynamic event, dynamic arguments)? onEvent;
-  final void Function()? onStart;
 
   VapViewForIos(
-      {required this.onControllerCreated,
-      required this.fit,
-      this.onEvent,
-    this.onStart});
+      {required this.onControllerCreated, required this.fit, this.onEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +27,6 @@ class VapViewForIos extends StatelessWidget {
         onControllerCreated(VapController(
           viewId: viewId,
           onEvent: onEvent,
-          onStart: onStart,
         ));
       },
     );

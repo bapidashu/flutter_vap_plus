@@ -6,12 +6,10 @@ class VapController {
   late final MethodChannel _methodChannel;
   final int viewId;
   final void Function(dynamic event, dynamic arguments)? onEvent;
-  final void Function()? onStart;
 
   VapController({
     required this.viewId,
     this.onEvent,
-    this.onStart,
   }) {
     _methodChannel = MethodChannel('flutter_vap_controller_$viewId');
     _methodChannel.setMethodCallHandler(_onMethodCallHandler);
@@ -84,9 +82,6 @@ class VapController {
   Future _onMethodCallHandler(MethodCall call) async {
     onEvent?.call(call.method, call.arguments);
     switch (call.method) {
-      case "onStart":
-        onStart?.call();
-        break;
       case "onComplete":
         if (playCompleter != null && !(playCompleter?.isCompleted ?? true)) {
           playCompleter?.complete();

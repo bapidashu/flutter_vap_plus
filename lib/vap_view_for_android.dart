@@ -9,7 +9,6 @@ class VapViewForAndroid extends StatelessWidget {
   final VapScaleFit fit;
   final int repeatCount;
   final void Function(dynamic event, dynamic arguments)? onEvent;
-  final void Function()? onStart;
   final void Function(Object error)? onError;
 
   VapViewForAndroid(
@@ -17,7 +16,6 @@ class VapViewForAndroid extends StatelessWidget {
       required this.fit,
       required this.repeatCount,
       this.onEvent,
-      this.onStart,
       this.onError});
 
   @override
@@ -43,8 +41,7 @@ class VapViewForAndroid extends StatelessWidget {
               if (event == 'onFailed' && arguments != null) {
                 onError?.call(arguments);
               }
-            },
-            onStart: onStart));
+            }));
       },
     );
   }
